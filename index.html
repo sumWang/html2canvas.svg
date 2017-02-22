@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                border-spacing: 0;
+                line-height: 1.8;
+            }
+            table td {
+                border: 1px solid #999;
+                padding: 10px;
+                vertical-align: top;
+            }
+            table.c_table td {
+                background: #F5F5F5;
+            }
+        </style>
+    </head>
+
+    <body>
+    <table>
+        <tr>
+            <td width="150">
+                <ul>
+                    <li>菜单一</li>
+                    <li>菜单二</li>
+                    <li>菜单三</li>
+                    <li>菜单四</li>
+                    <li>菜单五</li>
+                    <li>菜单六</li>
+                    <li>菜单七</li>
+                    <li>菜单八</li>
+                </ul>
+            </td>
+            <td>
+                <div>
+                    <input type="button" value="截取内容区域" onclick="screenshot(document.getElementById('content'))">
+                    <input type="button" value="截取表格一" onclick="screenshot(document.getElementById('div1'))">
+                    <input type="button" value="截取表格二" onclick="screenshot(document.getElementById('div2'))">
+                    <input type="button" value="截取表格三" onclick="screenshot(document.getElementById('div3'))">
+                    <input type="button" id="screenshotSVG_btn" value="截取SVG并提交" onclick="screenshotSVG('#content')">
+                </div>
+
+                <div  id="content">
+                    <div id="div1">
+                        <h2>表格1</h2>
+                        <table class="c_table">
+                            <tr>
+                                <td>表格1</td>
+                                <td>表格1</td>
+                                <td>表格1</td>
+                                <td>表格1</td>
+                            </tr>
+                            <tr>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div id="div2">
+                        <h2>表格2</h2>
+                        <table class="c_table">
+                            <tr>
+                                <td>表格2</td>
+                                <td>表格2</td>
+                                <td>表格2</td>
+                                <td>表格2</td>
+                            </tr>
+                            <tr>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div id="div2">
+                        <h2>表格3</h2>
+                        <table class="c_table">
+                            <tr>
+                                <td>表格3</td>
+                                <td>表格3</td>
+                                <td>表格3</td>
+                                <td>表格3</td>
+                            </tr>
+                            <tr>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <script src="libs/jquery.min.js"></script>
+    <script src="libs/html2canvas.min.js"></script>
+    <!-- 解析 SVG-->
+    <script src="libs/html2canvas.svg.min.js"></script>
+    <script src="libs/rgbcolor.js"></script>
+    <script src="libs/StackBlur.js"></script>
+    <script src="libs/canvg.min.js"></script>
+    <!-- end -->
+    <script>
+        function screenshot (id) {
+            html2canvas(id, {
+                onrendered: function(canvas) {
+                    var img = canvas.toDataURL()
+                    window.open(img);
+                }
+            });
+        }
+
+        function screenshotSVG (id) {
+            $('#screenshotSVG_btn').val('正在发送中...');
+
+            var svgElements = $(id).find('svg');
+
+            svgElements.each(function () {
+                var canvas;
+                var xml;
+                $.each($(this).find('[style*=em]'), function (index, el) {
+                    $(this).css('font-size', getStyle(el, 'font-size'));
+                });
+
+                canvas = document.createElement('canvas');
+                canvas.className = 'screenShotTempCanvas';
+                xml = (new XMLSerializer()).serializeToString(this);
+                xml = xml.replace(/xmlns="http:\/\/www\.w3\.org\/2000\/svg"/, '');
+
+                window.canvg(canvas, xml);
+                $(canvas).insertAfter(this);
+                $(this).attr('class', 'tempHide');
+                $(this).hide();
+            });
+
+
+            window.html2canvas($(id), {
+                onrendered: function (canvas) {
+                    var imgfile = canvas.toDataURL('image/png');
+                    $.ajax({
+                        type: "post",
+                        url: "upload.php",
+                        dataType: "json",
+                        data: {
+                            mail_cap: imgfile,
+                        },
+                        success: function (data) {
+                            console.log(data);
+                        },
+                        error: function (error) {
+                            console.log(error);
+                        }
+                    });
+                }
+            });
+
+            $(id).find('.screenShotTempCanvas').remove();
+            $(id).find('.tempHide').show();
+            $(id).find('.tempHide').removeClass('tempHide');
+        };
+    </script>
+
+    </body>
+</html>
